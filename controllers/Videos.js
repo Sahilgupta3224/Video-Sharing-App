@@ -54,7 +54,7 @@ export const DeleteVideo=async(req,res,next)=>{
     }catch{
         next(err)
     }
-}
+  }
 
 export const GetVideo=async(req,res,next)=>{
     try{
@@ -76,7 +76,7 @@ export const addView=async(req,res,next)=>{
     }
 }
 
-export const mostviewed=async(req,res,next)=>{
+export const trend=async(req,res,next)=>{
     try{
         const trending = await Video.find().sort({views:-1});
         res.status(200).json(trending);
@@ -94,21 +94,23 @@ export const random =async(req,res,next)=>{
     }
 }
 
-export const  subscribedVideos =async(req,res,next)=>{
-    try{
-        const user = await User.findById(req.user.id);
-        const channels = user.subscribedusers;
-        const list = await Promise.all(
-            channels.map(async (channelId) => {
-              return await Video.find({ userId: channelId });
-            })
-          );
-      
-          res.status(200).json(list.flat().sort((one,two) => two.createdAt - one.createdAt));
-    }catch{
-        next(err)
+export const subscribedVideos = async (req, res, next) => {
+    try {
+      const user = await User.findById(req.user.id);
+      const subscribedChannels = user.subscribedusers;
+  
+      const list = await Promise.all(
+        subscribedChannels.map(async (channelId) => {
+          return await Video.find({ userId: channelId });
+        })
+      );
+  
+      res.status(200).json(list.flat().sort((a, b) => b.createdAt - a.createdAt));
+    } catch (err) {
+      next(err);
+      console.log(err)
     }
-}
+  };
 
 export const tagVideo=async(req,res,next)=>{
     const { tags } = req.query;
@@ -137,19 +139,19 @@ export const search = async (req, res, next) => {
 };
 
 export const likeVideo = async (req, res, next) => {
-    const id = req.user.id;
-    const videoId = req.params.id;
-    try {
-      const video = await Video.findByIdAndUpdate(
-        videoId,
-        { $addToSet: { likes: id },$pull:{dislikes:id} },
-        { new: true }
-      );
-      res.status(200).json(video);
-    } catch (err) {
-      next(err);
-    }
+  const id = req.user.id;
+  const videoId = req.params.videoId;
+  try {
+    await Video.findByIdAndUpdate(videoId,{
+      $addToSet:{likes:id},
+      $pull:{dislikes:id}
+    })
+    res.status(200).json("The video has been liked.")
+  } catch (err) {
+    next(err);
+  }
 };
+
 
 export const dislikeVideo = async(req,res,next)=>{
     const id = req.user.id;
