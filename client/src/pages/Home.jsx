@@ -58,7 +58,7 @@ React.useEffect(() => {
 
   return (
     <Container>
-      {videos.map((video)=>(<Card key={video.id} video={video}/>))}
+      {videos.map((video)=>(<Card key={video._id} video={video}/>))}
     </Container>
   );
 };
