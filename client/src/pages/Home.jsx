@@ -27,7 +27,7 @@ const Home = ({type}) => {
   fetchVideos();
 }, [type]);*/
 
-React.useEffect(() => {
+/*React.useEffect(() => {
   const fetchVideos = async () => {
     try {
       //const YOUR_AUTH_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGJlZTIwZmUyZjAwY2I2NmM3M2EwOWEiLCJ1c2VybmFtZSI6InRlc3QxIiwiaWF0IjoxNjkwNzA5MjMyfQ.EhBqmzEOiCvM3j69J_cudRYOz6T69znMQDazQzf_zFo";
@@ -46,11 +46,19 @@ React.useEffect(() => {
     }
   };
   fetchVideos();
+}, [type]);*/
+
+React.useEffect(() => {
+  const fetchVideos = async () => {
+    const res = await axios.get(`/videos/${type}`);
+    setVideos(res.data);
+  };
+  fetchVideos();
 }, [type]);
 
   return (
     <Container>
-      {videos.map((video)=>(<Card />))}
+      {videos.map((video)=>(<Card key={video.id} video={video}/>))}
     </Container>
   );
 };
